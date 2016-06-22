@@ -1,0 +1,67 @@
+#recommand to install https://spacy.io/ for dependecy parser,tag ....
+
+step1:
+cd utils/;python getAllSpecialSymbosInText.py ../data/food yelp_sample50k.txt symbols.txt deletes.txt;cd ../
+detect all the non-english character
+   symbols.txt   contains the symbol character(not include . ' :) 
+   deletes.txt   contains character that stanford pos tagger and dependecy parser can not handle
+
+
+step2:
+cd main1;python generateTag.py ../data/food yelp_sample50k.txt_new > ../data/food/w2tag.txt;cd ..
+generate the pos tag for every sentence
+    w2tag.txt contains two colums:
+It	PRP
+was	VBD
+phenomenal	JJ
+and	CC
+simply	RB
+the	DT
+best	JJS
+I	PRP
+'	POS
+ve	JJ
+ever	NN
+had	VBD
+
+
+step3:
+to generate the entity mention, used the code from CRF++-0.58
+crf_test -m conll/modell conll/w2tag.txt >w2tag2E_crf.txt
+
+model is the pre-train model  from conll dataset using crf++-0.58
+
+step4:
+extract the triple from the sentence
+   step4-1: get pure sentence:  cd utils;python getPureSetence.py ../data/food/ w2tag.txt w2tag2E_crf.txt yelp_final.txt;cd ..
+            the context in yelp_final.txt is as followsi: the first column is the sentence, second is pos tag and third is CRF_NER tag!
+We were seated at 5:52 and the waiter came and got our drink orders 	PRP VBD VBN IN CD CC DT NN VBD CC VBD PRP$ NN NNS 	B-NP B-VP I-VP B-PP B-NP O B-NP I-NP B-VP O B-VP B-NP I-NP I-NP 
+
+   step4-2: merge to get the reasonable triple
+   python SetencePro.py data/food/ yelp_final.txt > data/food/extract_triple.txt
+
+step 5 : novel entity detection
+ 
+  step 5-2:
+    In this step, we can generate seed triples:
+      cd main1;python filter_knowEntityTriple.py ../data/food/ food_enthasName_type.txt_new extract_triple.txt> ../data/food/ftri.txt ;cd ..
+      
+      ftri.txt(mapping entity to the freebase using complete match)
+          
+  step 5-1:
+    #attetion to typing the entity:(top 20? most popular )
+    for yelp: the type we use is /food/... /location/location(all location merge into the location) /wine/... /dining/cuisine
+    in main1 fold:
+       cd main1;python filterFreebaseFoodType.py; cd ..
+    in this function, we will get the new file: food_enthasName_type.txt_new (we delete the wrong typing information from the freebase)
+
+  step 5-3 :
+    we will tag seed triples extracted in the step5-1 (we use the freebase flat typing system)
+      cd main1;python analysisEntAndRel.py;cd ..
+      In this step, we can get the training type2Num.txt file (as we all known, this train text may not contain all the type in food domain of the freebase)
+
+step 6: relation classification or clustering( map the text relation mention into the knowledge base relation)
+     
+
+step 7: label propagation
+ 
