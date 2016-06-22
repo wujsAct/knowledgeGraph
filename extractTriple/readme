@@ -61,7 +61,7 @@ step 5 : novel entity detection
       In this step, we can get the training type2Num.txt file (as we all known, this train text may not contain all the type in food domain of the freebase)
 
 step 6: relation classification or clustering( map the text relation mention into the knowledge base relation)
-     
+     python 
 
 step 7: label propagation
  
