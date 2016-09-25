@@ -6,10 +6,6 @@ Created on Tue Mar 15 17:03:31 2016
 """
 import codecs
 
-
-
-#dir_path ='../data/nyt/'
-#domains = 'nyt'
 class TypeDict():
     def __init__(self,domains,dir_path):
         self.dir_path = dir_path
@@ -19,9 +15,11 @@ class TypeDict():
         self.type_num = {}
         for line in f1.readlines():
             line = line.strip()
-            #print 'line',line
             typer,num = line.split('\t')
-            #delete the topic
+            
+            '''
+            delete the common topic type, almost appear in every entity.
+            '''
             if '/common/topic' not in typer:
                 num = int(num)
                 self.type_num[typer] = num

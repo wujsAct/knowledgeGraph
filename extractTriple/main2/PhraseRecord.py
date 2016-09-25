@@ -7,7 +7,7 @@ Created on Tue Mar 08 17:05:38 2016
 
 import re
 class PhraseRecord:
-    def __init__(self, start, end, pattern):
+    def __init__(self, start, end, pattern=None):
         self.startIndex = start
         self.endIndex = end
         self.pattern = pattern
@@ -41,7 +41,7 @@ class PhraseRecord:
 
 
 class EntRecord(PhraseRecord): 
-    def __init__(self, start, end, pattern):
+    def __init__(self, start, end, pattern=None):
         PhraseRecord.__init__(self, start, end, pattern)
     
     def absorb(self, latter):
@@ -59,7 +59,7 @@ class EntRecord(PhraseRecord):
 
 		
 class RelRecord(PhraseRecord): 
-    def __init__(self, start, end, pattern):
+    def __init__(self, start, end, pattern=None):
         PhraseRecord.__init__(self, start, end, pattern)
     
     def absorb(self, latter):
